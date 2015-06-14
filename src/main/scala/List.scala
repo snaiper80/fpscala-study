@@ -114,6 +114,36 @@ object List {
 
   def incMap(l: List[Int]): List[Int] =
     foldRight(l, Nil: List[Int])((l, acc) => Cons(l + 1, acc))
+
+  def map[A,B](l: List[A])(f: A => B): List[B] = 
+    foldRight(l, Nil: List[B])((i, acc) => Cons(f(i), acc))
+
+  def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] =
+    foldRight(l, Nil: List[B])((i, acc) => append(f(i), acc))
+
+  // more clear answer better than me. it's simple
+  def flatMapAns[A,B](l: List[A])(f: A => List[B]): List[B] =
+    concat(map(l)(f))
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, Nil: List[A])((i, acc) => 
+      if (f(i)) Cons(i, acc)
+      else acc
+    )
+
+  def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] =
+    flatMap(as)((h) => if (f(h)) List(h) else Nil)
+
+  // 음..이러면 두 개가 갯수가 같은 경우만 되는거 같은데;; 원래 정의가 그런가?
+  def zipWith[A,B,C](as: List[A], bs: List[B])(f: (A, B) => C): List[C] =
+    (as, bs) match {
+      case (_, Nil) => Nil
+      case (Nil, _) => Nil
+      case (Cons(hl, tl), Cons(hr, tr)) => Cons(f(hl, hr), zipWith(tl, tr)(f))
+
+    }
+
+
 }
 
 
